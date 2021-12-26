@@ -7,6 +7,8 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import org.w3c.dom.Text
+import java.sql.Time
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -42,12 +44,7 @@ class MainActivity : AppCompatActivity() {
                 /** below are the arguments that we will
                  * get when date is selected */
                     view, selected_year, selected_month, selected_dayOfMonth ->
-                // below all logic what happens when date picker
-                Toast.makeText(
-                    this,
-                    "year = $selected_year, month = $selected_month, day = $selected_dayOfMonth",
-                    Toast.LENGTH_LONG
-                ).show()
+
                 /**
                  * Now logic for calculate date
                  * */
@@ -65,15 +62,15 @@ class MainActivity : AppCompatActivity() {
                 //converted to simpleDateFormat object
                 val parsed_date = sdf.parse(selected_date)
 
-                // conver date in minutes
-                // it will return time in millisecond from 1 jan 1971
-                val selected_date_in_minutes = (parsed_date!!.time) / 60000
+                // convert date in minutes
+                // it will return time in millisecond from 1 jan 1970
+                val selected_date_in_minutes = TimeUnit.MILLISECONDS.toMinutes(parsed_date!!.time)
 
                 val current_date =
                     sdf.parse(
                         sdf.format(System.currentTimeMillis())
                     )
-                val current_date_in_minutes = current_date!!.time / 60000
+                val current_date_in_minutes = TimeUnit.MILLISECONDS.toMinutes(current_date!!.time)
 
                 val diff_in_minutes = current_date_in_minutes - selected_date_in_minutes
 
@@ -90,10 +87,12 @@ class MainActivity : AppCompatActivity() {
             day,
         )
 
-        // limit selecting date to current date maxDate will limit
-        // the date picker dialog 8640000 milliseconds in a day
+        /**
+         * Set the max date to current date so that we can restrict
+         * user from accessing future dates*/
         datepickerDialog.datePicker.maxDate = Date().time - 8640000
         datepickerDialog.show()
 
     }
 }
+
